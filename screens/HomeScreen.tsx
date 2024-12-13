@@ -2,34 +2,43 @@ import React, {useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Bars3CenterLeftIcon, MapPinIcon, UserIcon} from "react-native-heroicons/solid";
-import {useNavigation} from "@react-navigation/native";
+import {NavigationProp, useNavigation} from "@react-navigation/native";
 import {agencies, Car, cars} from "../theme";
 import CarCard from "../components/CarCard";
 import Animated, {FadeInDown} from "react-native-reanimated";
 import MapView, {Marker} from "react-native-maps";
-import {BlurView} from "@react-native-community/blur";
+import {BlurView} from "expo-blur";
+import {StatusBar} from "expo-status-bar";
+import {RootStackParamList} from "../App";
+import ProfileCard from "../components/ProfileCard";
 
 function HomeScreen() {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [activeAgency, setActiveAgency] = useState(agencies.at(0));
     const [activeCar, setActiveCar] = useState<Car | null>(null);
+    const [showProfile, setShowProfile] = useState(false);
 
     return (
-        <SafeAreaView className={"flex-1 bg-red-200 pt-5"}>
+        <SafeAreaView className={"flex-1 bg-red-200 "}>
+            <StatusBar style={'dark'}></StatusBar>
             {/*Header*/}
             <BlurView
-                intensity={50} // Contrôle le niveau de flou
-                tint="light"   // Peut être 'light', 'dark', ou 'default'
-                className="absolute inset-x-0 top-0 mx-5 pb-3 flex-row justify-between items-center"
-                style={{ zIndex: 10 }}
+                intensity={25}
+                tint={'light'}
+                className="absolute inset-x-0 top-0 px-6 pt-10 pb-3 flex-row justify-between items-center overflow-hidden rounded-2xl"
+                style={{zIndex: 10, backgroundColor: "transparent"}}
             >
-                <Bars3CenterLeftIcon size={30} color="black" />
-                <TouchableOpacity className="p-2 rounded-xl bg-red-400">
-                    <UserIcon size={25} color="#C41B1B" />
+                <Bars3CenterLeftIcon size={30} color="black"/>
+                <TouchableOpacity className="p-2 rounded-xl bg-red-400" onPress={() => setShowProfile(!showProfile)}>
+                    <UserIcon size={25} color="#C41B1B"/>
                 </TouchableOpacity>
             </BlurView>
 
-            <ScrollView>
+            {
+                showProfile && <ProfileCard onClose={() => setShowProfile(false)}/>
+            }
+
+            <ScrollView className={'pt-20'}>
 
                 {/*Agencies*/}
                 <View className={"mt-3"}>
@@ -81,8 +90,7 @@ function HomeScreen() {
                 {/*Agency Informations*/}
                 <View className={"mt-8 pl-5 gap-5"}>
                     <Text className={"text-xl font-bold"}>
-                        {// @ts-ignore
-                            activeAgency.name}, {activeAgency.city}
+                        {activeAgency.name}, {activeAgency.city}
                     </Text>
                 </View>
 
@@ -146,7 +154,7 @@ function HomeScreen() {
                 {/* Separator */}
                 <Text className={"font-extrabold text-red-400 ml-8"}>_______ _</Text>
 
-                <View className={'mt-5 mx-5 gap-4'}>
+                <View className={'mt-7 mb-20 mx-5 gap-4'}>
                     <View className={'flex-row gap-3 items-center'}>
                         <MapPinIcon size={"20"} color={"#C41B1B"}/>
                         <Text className={"text-xl font-medium"}>
@@ -155,22 +163,20 @@ function HomeScreen() {
                     </View>
 
                     <MapView
-                        style={{ width: '100%', height: 200, borderRadius: 10 }}
+                        style={{width: '100%', height: 200, borderRadius: 10}}
                         initialRegion={{
-                            // @ts-ignore
                             latitude: activeAgency.localisation[0],
-                            // @ts-ignore
                             longitude: activeAgency.localisation[1],
                             latitudeDelta: 0.02,
                             longitudeDelta: 0.02,
                         }}
                     >
                         <Marker
-                            // @ts-ignore
-                            coordinate={{ latitude: activeAgency.localisation[0], longitude: activeAgency.localisation[1] }}
-                            // @ts-ignore
+                            coordinate={{
+                                latitude: activeAgency.localisation[0],
+                                longitude: activeAgency.localisation[1]
+                            }}
                             title={activeAgency.city}
-                            // @ts-ignore
                             description={activeAgency.name}
                         />
                     </MapView>
@@ -181,15 +187,21 @@ function HomeScreen() {
             {/*Reserve Button*/}
             {
                 activeCar ? (
-                    <Animated.View entering={FadeInDown.delay(200).duration(1000).springify()}
-                                   className={"flex items-center bg-transparent"}>
-                        <TouchableOpacity
-                            className="w-40 bg-red-400 p-3 rounded-3xl mb-3"
+                    <Animated.View entering={FadeInDown.delay(100).duration(1000).springify()} className={'relative inset-x-0 flex items-center bg-transparent'}>
+                        <BlurView
+                            intensity={0}
+                            className="absolute bottom-0 w-full"
+                            style={{zIndex: 10}}
                         >
-                            <Text className="text-xl font-bold text-white text-center">
-                                Réserver
-                            </Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                className="mx-8 bg-red-500 p-3 rounded-3xl mb-3"
+                                onPress={() => navigation.navigate('Reservation')}
+                            >
+                                <Text className="text-xl font-bold text-white text-center">
+                                    Réserver
+                                </Text>
+                            </TouchableOpacity>
+                        </BlurView>
                     </Animated.View>
                 ) : null
             }

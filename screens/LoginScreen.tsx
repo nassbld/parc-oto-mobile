@@ -10,7 +10,7 @@ function LoginScreen() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     return (
-        <SafeAreaView className="flex-1 bg-white">
+        <SafeAreaView className="flex-1 bg-white inset-0">
             <StatusBar style="light" />
             <Image className="h-full w-full absolute" source={require('../assets/images/background.png')} />
             <View className="flex-row justify-around w-full absolute">
