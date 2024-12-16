@@ -5,11 +5,12 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import ReservationScreen from "./screens/ReservationScreen";
 import "./global.css";
+import {Agency, Car} from "./theme";
 
 export type RootStackParamList = {
     Login: undefined;
     Home: undefined;
-    Reservation: undefined;
+    Reservation: { activeCar: Car, activeAgency: Agency };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

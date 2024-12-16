@@ -1,14 +1,21 @@
 import React, {useState} from 'react';
-import {Platform, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Platform, ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from "react-native-safe-area-context";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import {XMarkIcon} from "react-native-heroicons/solid";
-import {NavigationProp, useNavigation} from "@react-navigation/native";
+import {BuildingOfficeIcon, ChevronRightIcon, MapPinIcon, XMarkIcon} from "react-native-heroicons/solid";
+import {NavigationProp, RouteProp, useNavigation, useRoute} from "@react-navigation/native";
 import {RootStackParamList} from "../App";
-import Animated, {FadeInUp, FadeOutUp, Layout} from "react-native-reanimated";
+import Animated, {FadeInDown} from "react-native-reanimated";
+import {BlurView} from "expo-blur";
+import {LinearGradient} from "expo-linear-gradient";
+import SchedulePicker from "../components/SchedulePicker";
+
+type ReservationScreenRouteProp = RouteProp<RootStackParamList, 'Reservation'>;
 
 function ReservationScreen() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+    const route = useRoute<ReservationScreenRouteProp>();
+    const {activeCar, activeAgency} = route.params;
 
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
@@ -39,95 +46,86 @@ function ReservationScreen() {
     };
 
     return (
-        <SafeAreaView className={'flex-1 bg-red-200 py-3 px-5'}>
+        <SafeAreaView className={'flex-1 bg-red-200'}>
             {/* Header */}
-            <View className={'flex-row justify-between items-center mt-3'}>
-                <Text className={'text-2xl font-semibold tracking-wide'}>Réservation</Text>
-                <TouchableOpacity className="p-2 rounded-xl bg-red-400" onPress={() => navigation.goBack()}>
-                    <XMarkIcon size={25} color="#C41B1B" />
+            <View
+                className="absolute inset-x-0 top-0 px-6 pt-3 pb-1 flex-row items-center justify-between bg-red-200"
+                style={{zIndex: 10}}
+            >
+                <View className={'w-8'}></View>
+                <Text className={'text-xl font-semibold tracking-wide'}>Réservation</Text>
+                <TouchableOpacity className="p-2 rounded-xl bg-red-300" onPress={() => navigation.goBack()}>
+                    <XMarkIcon size={16} color="#C41B1B"/>
                 </TouchableOpacity>
             </View>
 
+            <LinearGradient
+                colors={['#fecaca', 'rgba(254, 202, 202, 0)']}
+                start={{x: 0, y: 0.3}}
+                end={{x: 0, y: 0.8}}
+                style={{position: 'absolute', zIndex: 10, top: 40, right: 0, left: 0, height: 25}}
+            />
+
             {/* Ligne décorative */}
-            <Text className={'font-extrabold text-red-400 ml-1 -mt-3'}>__ _</Text>
+            <ScrollView className={'pt-16'}>
 
-            <Animated.View layout={Layout}>
-                <Text className="mt-6 ml-2 font-semibold text-lg tracking-wide">Jour</Text>
-
-                <View className={'flex-row gap-3 items-center'}>
-                    <TouchableOpacity
-                        onPress={toggleDatePicker}
-                        className="flex-1 mt-3 p-3 mr-auto rounded-lg bg-white border border-gray-300 flex items-center justify-center"
-                    >
-                        <Text className="text-gray-700 tracking-wide">
-                            {selectedDate ? selectedDate.toLocaleDateString() : 'Sélectionner une date'}
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        className="mt-3 p-3 rounded-xl bg-red-400"
-                        onPress={() => setShowDatePicker(false)}
-                    >
-                        <Text className={'text-white font-semibold tracking-wide'}>Appliquer</Text>
-                    </TouchableOpacity>
+                <View className={'m-2 items-center'}>
+                    <Image source={activeCar.picture} style={{width: 180, height: 120}}></Image>
+                    <View className={'flex-row items-center justify-center mt-5'}>
+                        <Text className={'text-3xl font-semibold'}>{activeCar.brand} • </Text>
+                        <Text className={'text-2xl font-medium mt-1'}>{activeCar.model}</Text>
+                    </View>
+                    <Text className={'font-semibold text-gray-600 mt-2'}>DF-654-PG</Text>
                 </View>
-            </Animated.View>
 
-            {/* Picker animé */}
-            {showDatePicker && (
-                <Animated.View
-                    entering={FadeInUp.duration(200)}
-                    exiting={FadeOutUp.duration(200)}
-                    layout={Layout.springify()}
-                >
-                    <DateTimePicker
-                        value={currentDate}
-                        minimumDate={new Date()}
-                        mode="date"
-                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                        onChange={onDateChange}
-                    />
-                </Animated.View>
-            )}
 
-            {/* Section avec animation */}
-            <Animated.View layout={Layout}>
-                <Text className="mt-6 ml-2 font-semibold text-lg tracking-wide">Heure</Text>
-
-                <View className={'flex-row gap-3 items-center'}>
-                    <TouchableOpacity
-                        onPress={toggleTimePicker}
-                        className="flex-1 mt-3 p-3 mr-auto rounded-lg bg-white border border-gray-300 flex items-center justify-center"
-                    >
-                        <Text className="text-gray-700 tracking-wide">
-                            {selectedTime
-                                ? selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                                : 'Sélectionner une heure'}
-                        </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        className="mt-3 p-3 rounded-xl bg-red-400"
-                        onPress={() => setShowTimePicker(false)}
-                    >
-                        <Text className={'text-white font-semibold tracking-wide'}>Appliquer</Text>
-                    </TouchableOpacity>
+                <View className={'mx-5 mt-5 py-2 px-4 flex-row items-center gap-5 bg-red-50 rounded-lg'}>
+                    <View className="p-2 rounded-full bg-red-200">
+                        <BuildingOfficeIcon size={25} color="#C41B1B"/>
+                    </View>
+                    <View>
+                        <Text className={'text-gray-600 text-lg font-semibold tracking-wide'}>Agence</Text>
+                        <Text className={'text-xl font-semibold'}>{activeAgency.name}</Text>
+                    </View>
                 </View>
-            </Animated.View>
 
-            {/* Picker animé */}
-            {showTimePicker && (
-                <Animated.View
-                    entering={FadeInUp.duration(200)}
-                    exiting={FadeOutUp.duration(200)}
-                    layout={Layout.springify()}
+
+                <View className={'mx-5 mt-3 py-2 px-4 flex-row items-center gap-5 bg-red-50 rounded-lg'}>
+                    <View className="p-2 rounded-full bg-red-200">
+                        <MapPinIcon size={25} color="#C41B1B"/>
+                    </View>
+                    <View>
+                        <Text className={'text-gray-600 text-lg font-semibold tracking-wide'}>Adresse</Text>
+                        <Text className={'text-xl font-semibold'}>{activeAgency.address},</Text>
+                        <Text className={'text-xl font-semibold'}>{activeAgency.city}</Text>
+                    </View>
+                </View>
+
+                <Text className={'font-extrabold text-red-400 ml-8 mt-2'}>__ _</Text>
+
+                <SchedulePicker />
+
+                <View className={'h-24'}></View>
+
+            </ScrollView>
+
+            <Animated.View entering={FadeInDown.delay(100).duration(500)}>
+                <BlurView
+                    intensity={75}
+                    className="absolute bottom-0 w-full border-t border-red-300 p-3"
+                    style={{zIndex: 10}}
                 >
-                    <DateTimePicker
-                        value={currentTime}
-                        mode="time"
-                        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                        onChange={onTimeChange}
-                    />
-                </Animated.View>
-            )}
+                    <TouchableOpacity
+                        className="mx-3 bg-red-500 p-3 rounded-full flex-row items-center justify-center gap-3"
+                        onPress={() => navigation.navigate('Reservation', {activeCar})}
+                    >
+                        <Text className="text-xl font-semibold tracking-wide text-white text-center">
+                            Confirmer la réservation
+                        </Text>
+                        <ChevronRightIcon size={20} color={'white'}></ChevronRightIcon>
+                    </TouchableOpacity>
+                </BlurView>
+            </Animated.View>
         </SafeAreaView>
     );
 }

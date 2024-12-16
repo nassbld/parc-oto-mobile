@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, Text, Image} from 'react-native';
+import {Image, Text, View} from 'react-native';
 import {Car} from "../theme";
 
-function CarCard({ car, isActive }: { car: Car; isActive: boolean }) {
+function CarCard({car, isActive}: { car: Car; isActive: boolean }) {
 
     let backGroundStyle = {
         width: 270,

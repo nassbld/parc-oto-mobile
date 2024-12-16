@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from "react-native-safe-area-context";
-import {Bars3CenterLeftIcon, MapPinIcon, UserIcon} from "react-native-heroicons/solid";
+import {Bars3CenterLeftIcon, ChevronRightIcon, MapPinIcon, UserIcon} from "react-native-heroicons/solid";
 import {NavigationProp, useNavigation} from "@react-navigation/native";
 import {agencies, Car, cars} from "../theme";
 import CarCard from "../components/CarCard";
-import Animated, {FadeInDown} from "react-native-reanimated";
+import Animated, {FadeInDown, FadeInLeft} from "react-native-reanimated";
 import MapView, {Marker} from "react-native-maps";
 import {BlurView} from "expo-blur";
 import {StatusBar} from "expo-status-bar";
 import {RootStackParamList} from "../App";
 import ProfileCard from "../components/ProfileCard";
+import {LinearGradient} from "expo-linear-gradient";
 
 function HomeScreen() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -19,20 +20,29 @@ function HomeScreen() {
     const [showProfile, setShowProfile] = useState(false);
 
     return (
-        <SafeAreaView className={"flex-1 bg-red-200 "}>
+        <SafeAreaView className={"flex-1 bg-red-200"}>
             <StatusBar style={'dark'}></StatusBar>
+
             {/*Header*/}
-            <BlurView
-                intensity={25}
-                tint={'light'}
-                className="absolute inset-x-0 top-0 px-6 pt-10 pb-3 flex-row justify-between items-center overflow-hidden rounded-2xl"
-                style={{zIndex: 10, backgroundColor: "transparent"}}
+
+            <View
+                className="absolute inset-x-0 top-0 px-6 pt-11 pb-3 flex-row justify-between items-center bg-red-200"
+                style={{zIndex: 10}}
             >
                 <Bars3CenterLeftIcon size={30} color="black"/>
-                <TouchableOpacity className="p-2 rounded-xl bg-red-400" onPress={() => setShowProfile(!showProfile)}>
+                <TouchableOpacity className="p-2 rounded-xl bg-red-400"
+                                  onPress={() => setShowProfile(!showProfile)}>
                     <UserIcon size={25} color="#C41B1B"/>
                 </TouchableOpacity>
-            </BlurView>
+            </View>
+
+            <LinearGradient
+                colors={['#fecaca', 'rgba(254, 202, 202, 0)']}
+                start={{x: 0, y: 0.3}}
+                end={{x: 0, y: 0.8}}
+                style={{position: 'absolute', zIndex: 10, top: 85, right: 0, left: 0, height: 25}}
+            />
+
 
             {
                 showProfile && <ProfileCard onClose={() => setShowProfile(false)}/>
@@ -154,7 +164,7 @@ function HomeScreen() {
                 {/* Separator */}
                 <Text className={"font-extrabold text-red-400 ml-8"}>_______ _</Text>
 
-                <View className={'mt-7 mb-20 mx-5 gap-4'}>
+                <View className={'mt-7 mx-5 gap-4'}>
                     <View className={'flex-row gap-3 items-center'}>
                         <MapPinIcon size={"20"} color={"#C41B1B"}/>
                         <Text className={"text-xl font-medium"}>
@@ -182,29 +192,42 @@ function HomeScreen() {
                     </MapView>
                 </View>
 
+                <View className={'h-24'}></View>
+
             </ScrollView>
 
             {/*Reserve Button*/}
-            {
-                activeCar ? (
-                    <Animated.View entering={FadeInDown.delay(100).duration(1000).springify()} className={'relative inset-x-0 flex items-center bg-transparent'}>
-                        <BlurView
-                            intensity={0}
-                            className="absolute bottom-0 w-full"
-                            style={{zIndex: 10}}
-                        >
+            <Animated.View entering={FadeInDown.delay(100).duration(1000)}>
+                <BlurView
+                    intensity={75}
+                    className="absolute bottom-0 w-full border-t border-red-300 p-3"
+                    style={{zIndex: 10}}
+                >
+                    {
+                        activeCar ?
                             <TouchableOpacity
-                                className="mx-8 bg-red-500 p-3 rounded-3xl mb-3"
-                                onPress={() => navigation.navigate('Reservation')}
+                                className="mx-8 bg-red-500 p-3 rounded-full"
+                                onPress={() => navigation.navigate('Reservation', {activeCar, activeAgency})}
                             >
-                                <Text className="text-xl font-bold text-white text-center">
+                                <Animated.View entering={FadeInLeft} className={'flex-row items-center justify-center'}>
+                                    <Text className="text-xl font-bold text-white text-center">
+                                        Réserver
+                                    </Text>
+                                    <ChevronRightIcon size={20} color={'white'}></ChevronRightIcon>
+                                </Animated.View>
+                            </TouchableOpacity>
+                            :
+                            <View
+                                className="mx-8 bg-red-100 p-3 rounded-full border border-red-300"
+                            >
+                                <Text className="text-xl font-bold text-center text-red-600">
                                     Réserver
                                 </Text>
-                            </TouchableOpacity>
-                        </BlurView>
-                    </Animated.View>
-                ) : null
-            }
+                            </View>
+                    }
+
+                </BlurView>
+            </Animated.View>
 
         </SafeAreaView>
     );
