@@ -17,15 +17,15 @@ function CarCard({car, isActive}: { car: Car; isActive: boolean }) {
     }
 
     return (
-        <View style={backGroundStyle} className={'mx-5 p-5 gap-5'}>
+        <View style={backGroundStyle} className={'mx-2 p-5 gap-5'}>
             <View className={'flex-row justify-center'}>
                 <Image source={car.picture} style={{width: 210, height: 140}}></Image>
             </View>
-            <View className={'ml-5'}>
-                <Text className={'font-bold text-xl shadow tracking-wide'} style={textStyle}>
+            <View className={'ml-4'}>
+                <Text className={'font-bold text-xl tracking-wide'} style={textStyle}>
                     {car.brand}
                 </Text>
-                <Text className={'font-semibold text-lg shadow tracking-wide'} style={textStyle}>
+                <Text className={'font-semibold text-lg tracking-wide'} style={textStyle}>
                     {car.model}
                 </Text>
             </View>

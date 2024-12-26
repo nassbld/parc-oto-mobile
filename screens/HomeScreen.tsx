@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Bars3CenterLeftIcon, ChevronRightIcon, MapPinIcon, UserIcon} from "react-native-heroicons/solid";
-import {NavigationProp, useNavigation} from "@react-navigation/native";
+import {DrawerActions, NavigationProp, useNavigation} from "@react-navigation/native";
 import {agencies, Car, cars} from "../theme";
 import CarCard from "../components/CarCard";
 import Animated, {FadeInDown, FadeInLeft} from "react-native-reanimated";
@@ -12,12 +12,14 @@ import {StatusBar} from "expo-status-bar";
 import {RootStackParamList} from "../App";
 import ProfileCard from "../components/ProfileCard";
 import {LinearGradient} from "expo-linear-gradient";
+import ReservationModal from "../components/ReservationModal";
 
 function HomeScreen() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [activeAgency, setActiveAgency] = useState(agencies.at(0));
     const [activeCar, setActiveCar] = useState<Car | null>(null);
     const [showProfile, setShowProfile] = useState(false);
+    const [reservationVisible, setReservationVisible] = useState(false);
 
     return (
         <SafeAreaView className={"flex-1 bg-red-200"}>
@@ -29,7 +31,10 @@ function HomeScreen() {
                 className="absolute inset-x-0 top-0 px-6 pt-11 pb-3 flex-row justify-between items-center bg-red-200"
                 style={{zIndex: 10}}
             >
-                <Bars3CenterLeftIcon size={30} color="black"/>
+                <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+                    <Bars3CenterLeftIcon size={30} color="black"/>
+                </TouchableOpacity>
+
                 <TouchableOpacity className="p-2 rounded-xl bg-red-400"
                                   onPress={() => setShowProfile(!showProfile)}>
                     <UserIcon size={25} color="#C41B1B"/>
@@ -81,7 +86,7 @@ function HomeScreen() {
 
                 {/*Cars Carousel*/}
                 <View className={"mt-8"}>
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <ScrollView className={'px-4'} horizontal showsHorizontalScrollIndicator={false}>
                         {
                             cars.map((car, index) => {
                                 // @ts-ignore
@@ -172,24 +177,26 @@ function HomeScreen() {
                         </Text>
                     </View>
 
-                    <MapView
-                        style={{width: '100%', height: 200, borderRadius: 10}}
-                        initialRegion={{
-                            latitude: activeAgency.localisation[0],
-                            longitude: activeAgency.localisation[1],
-                            latitudeDelta: 0.02,
-                            longitudeDelta: 0.02,
-                        }}
-                    >
-                        <Marker
-                            coordinate={{
+                    <View style={{width: '100%', height: 200, borderRadius: 10, overflow: 'hidden'}}>
+                        <MapView
+                            style={{flex: 1}}
+                            initialRegion={{
                                 latitude: activeAgency.localisation[0],
-                                longitude: activeAgency.localisation[1]
+                                longitude: activeAgency.localisation[1],
+                                latitudeDelta: 0.02,
+                                longitudeDelta: 0.02,
                             }}
-                            title={activeAgency.city}
-                            description={activeAgency.name}
-                        />
-                    </MapView>
+                        >
+                            <Marker
+                                coordinate={{
+                                    latitude: activeAgency.localisation[0],
+                                    longitude: activeAgency.localisation[1]
+                                }}
+                                title={activeAgency.city}
+                                description={activeAgency.name}
+                            />
+                        </MapView>
+                    </View>
                 </View>
 
                 <View className={'h-24'}></View>
@@ -199,26 +206,29 @@ function HomeScreen() {
             {/*Reserve Button*/}
             <Animated.View entering={FadeInDown.delay(100).duration(1000)}>
                 <BlurView
-                    intensity={75}
+                    intensity={50}
                     className="absolute bottom-0 w-full border-t border-red-300 p-3"
                     style={{zIndex: 10}}
                 >
                     {
                         activeCar ?
-                            <TouchableOpacity
-                                className="mx-8 bg-red-500 p-3 rounded-full"
-                                onPress={() => navigation.navigate('Reservation', {activeCar, activeAgency})}
-                            >
-                                <Animated.View entering={FadeInLeft} className={'flex-row items-center justify-center'}>
-                                    <Text className="text-xl font-bold text-white text-center">
-                                        Réserver
-                                    </Text>
-                                    <ChevronRightIcon size={20} color={'white'}></ChevronRightIcon>
-                                </Animated.View>
-                            </TouchableOpacity>
+                            <View>
+                                <TouchableOpacity
+                                    className="mx-5 bg-red-500 p-3 rounded-full"
+                                    onPress={() => setReservationVisible(true)}
+                                >
+                                    <Animated.View entering={FadeInLeft}
+                                                   className={'flex-row items-center justify-center'}>
+                                        <Text className="text-xl font-bold text-white text-center">
+                                            Réserver
+                                        </Text>
+                                        <ChevronRightIcon size={20} color={'white'}></ChevronRightIcon>
+                                    </Animated.View>
+                                </TouchableOpacity>
+                            </View>
                             :
                             <View
-                                className="mx-8 bg-red-100 p-3 rounded-full border border-red-300"
+                                className="mx-5 bg-red-100 p-3 rounded-full border border-red-300"
                             >
                                 <Text className="text-xl font-bold text-center text-red-600">
                                     Réserver
@@ -228,6 +238,17 @@ function HomeScreen() {
 
                 </BlurView>
             </Animated.View>
+
+            {
+                reservationVisible ?
+
+                    <ReservationModal
+                        visible={reservationVisible}
+                        onClose={() => setReservationVisible(false)}
+                        activeCar={activeCar}
+                        activeAgency={activeAgency}
+                    /> : null
+            }
 
         </SafeAreaView>
     );
