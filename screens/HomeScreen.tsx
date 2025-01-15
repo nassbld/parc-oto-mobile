@@ -53,153 +53,156 @@ function HomeScreen() {
                 showProfile && <ProfileCard onClose={() => setShowProfile(false)}/>
             }
 
-            <ScrollView className={'pt-20'}>
+            <ScrollView>
+                <View className={'pt-20 pb-24'}>
 
-                {/*Agencies*/}
-                <View className={"mt-3"}>
-                    <Text className={"text-2xl tracking-widest font-medium ml-5"}>
-                        Agences
-                    </Text>
-                    <Text className={"text-3xl font-semibold ml-5"}>
-                        Crédit Coopératif
-                    </Text>
-                    <ScrollView horizontal className={"mt-8 px-5"} showsHorizontalScrollIndicator={false}>
-                        {
-                            agencies.map((agency, index) => {
-                                let isActive = agency == activeAgency;
-                                let textClass = `text-xl ${isActive ? ' font-bold' : ''}`;
-                                return (
-                                    <TouchableOpacity key={index} onPress={() => setActiveAgency(agency)}
-                                                      className={"mr-8 relative"}>
-                                        <Text className={textClass}>{agency.name}</Text>
-                                        {
-                                            isActive ? (
-                                                <Text className={"font-extrabold text-red-400 -mt-3 ml-1"}>__ _</Text>
-                                            ) : null
-                                        }
-                                    </TouchableOpacity>
-                                )
-                            })
-                        }
-                    </ScrollView>
-                </View>
-
-                {/*Cars Carousel*/}
-                <View className={"mt-8"}>
-                    <ScrollView className={'px-4'} horizontal showsHorizontalScrollIndicator={false}>
-                        {
-                            cars.map((car, index) => {
-                                // @ts-ignore
-                                if (activeAgency.city == car.agency) {
+                    {/*Agencies*/}
+                    <View className={"mt-3"}>
+                        <Text className={"text-2xl tracking-widest font-medium ml-5"}>
+                            Agences
+                        </Text>
+                        <Text className={"text-3xl font-semibold ml-5"}>
+                            Crédit Coopératif
+                        </Text>
+                        <ScrollView horizontal className={"mt-8 px-5"} showsHorizontalScrollIndicator={false}>
+                            {
+                                agencies.map((agency, index) => {
+                                    let isActive = agency == activeAgency;
+                                    let textClass = `text-xl ${isActive ? ' font-bold' : ''}`;
                                     return (
-                                        <TouchableOpacity key={index} onPress={() => setActiveCar(car)}>
-                                            <CarCard car={car} isActive={activeCar === car}/>
+                                        <TouchableOpacity key={index} onPress={() => setActiveAgency(agency)}
+                                                          className={"mr-8 relative"}>
+                                            <Text className={textClass}>{agency.name}</Text>
+                                            {
+                                                isActive ? (
+                                                    <Text className={"font-extrabold text-red-400 -mt-3 ml-1"}>__
+                                                        _</Text>
+                                                ) : null
+                                            }
                                         </TouchableOpacity>
                                     )
-                                }
-                            })
-                        }
-                    </ScrollView>
-                </View>
+                                })
+                            }
+                        </ScrollView>
+                    </View>
 
-                {/*Agency Informations*/}
-                <View className={"mt-8 pl-5 gap-5"}>
-                    <Text className={"text-xl font-bold"}>
-                        {activeAgency.name}, {activeAgency.city}
-                    </Text>
-                </View>
-
-                {/*Agency Horaires*/}
-                <View className="mt-4 mx-6">
-                    {agencies.map((agency, index) => (
-                        // @ts-ignore
-                        activeAgency.name === agency.name && (
-                            <View key={index} className="flex-row gap-10">
-
-                                <View className="flex-1">
-                                    {Object.entries(agency.opened)
-                                        .slice(0, 3)
-                                        .map(([day, hours]) => (
-                                            <View key={day} className="mt-2 flex-row justify-between">
-                                                <Text className="font-semibold mr-1">
-                                                    {day.charAt(0).toUpperCase() + day.slice(1)}
-                                                </Text>
-                                                <View className="flex items-end">
-                                                    {hours ? (
-                                                        hours.map((hour, i) => (
-                                                            <Text key={i} className="text-sm">
-                                                                {hour}
-                                                            </Text>
-                                                        ))
-                                                    ) : (
-                                                        <Text className="text-sm italic">Fermé</Text>
-                                                    )}
-                                                </View>
-                                            </View>
-                                        ))}
-                                </View>
-
-                                <View className="flex-1">
-                                    {Object.entries(agency.opened)
-                                        .slice(3)
-                                        .map(([day, hours]) => (
-                                            <View key={day} className="mt-2 flex-row justify-between">
-                                                <Text className="font-semibold mr-1">
-                                                    {day.charAt(0).toUpperCase() + day.slice(1)}
-                                                </Text>
-                                                <View className="flex items-end">
-                                                    {hours ? (
-                                                        hours.map((hour, i) => (
-                                                            <Text key={i} className="text-sm">
-                                                                {hour}
-                                                            </Text>
-                                                        ))
-                                                    ) : (
-                                                        <Text className="text-sm italic">Fermé</Text>
-                                                    )}
-                                                </View>
-                                            </View>
-                                        ))}
-                                </View>
+                    {/*Cars Carousel*/}
+                    <View className={"mt-8"}>
+                        <ScrollView className={'w-full'} horizontal showsHorizontalScrollIndicator={false}>
+                            <View className={'flex-row px-3'}>
+                                {cars.map((car, index) => {
+                                    // @ts-ignore
+                                    if (activeAgency.city == car.agency) {
+                                        return (
+                                            <TouchableOpacity key={index} onPress={() => setActiveCar(car)}>
+                                                <CarCard car={car} isActive={activeCar === car}/>
+                                            </TouchableOpacity>
+                                        );
+                                    }
+                                })}
                             </View>
-                        )
-                    ))}
-                </View>
+                        </ScrollView>
+                    </View>
 
-                {/* Separator */}
-                <Text className={"font-extrabold text-red-400 ml-8"}>_______ _</Text>
 
-                <View className={'mt-7 mx-5 gap-4'}>
-                    <View className={'flex-row gap-3 items-center'}>
-                        <MapPinIcon size={"20"} color={"#C41B1B"}/>
-                        <Text className={"text-xl font-medium"}>
-                            {activeAgency.address}, {activeAgency.city}
+                    {/*Agency Informations*/}
+                    <View className={"mt-8 pl-5 gap-5"}>
+                        <Text className={"text-xl font-bold"}>
+                            {activeAgency.name}, {activeAgency.city}
                         </Text>
                     </View>
 
-                    <View style={{width: '100%', height: 200, borderRadius: 10, overflow: 'hidden'}}>
-                        <MapView
-                            style={{flex: 1}}
-                            initialRegion={{
-                                latitude: activeAgency.localisation[0],
-                                longitude: activeAgency.localisation[1],
-                                latitudeDelta: 0.02,
-                                longitudeDelta: 0.02,
-                            }}
-                        >
-                            <Marker
-                                coordinate={{
-                                    latitude: activeAgency.localisation[0],
-                                    longitude: activeAgency.localisation[1]
-                                }}
-                                title={activeAgency.city}
-                                description={activeAgency.name}
-                            />
-                        </MapView>
-                    </View>
-                </View>
+                    {/*Agency Horaires*/}
+                    <View className="mt-4 mx-6">
+                        {agencies.map((agency, index) => (
+                            // @ts-ignore
+                            activeAgency.name === agency.name && (
+                                <View key={index} className="flex-row gap-10">
 
-                <View className={'h-24'}></View>
+                                    <View className="flex-1">
+                                        {Object.entries(agency.opened)
+                                            .slice(0, 3)
+                                            .map(([day, hours]) => (
+                                                <View key={day} className="mt-2 flex-row justify-between">
+                                                    <Text className="font-semibold mr-1">
+                                                        {day.charAt(0).toUpperCase() + day.slice(1)}
+                                                    </Text>
+                                                    <View className="flex items-end">
+                                                        {hours ? (
+                                                            hours.map((hour, i) => (
+                                                                <Text key={i} className="text-sm">
+                                                                    {hour}
+                                                                </Text>
+                                                            ))
+                                                        ) : (
+                                                            <Text className="text-sm italic">Fermé</Text>
+                                                        )}
+                                                    </View>
+                                                </View>
+                                            ))}
+                                    </View>
+
+                                    <View className="flex-1">
+                                        {Object.entries(agency.opened)
+                                            .slice(3)
+                                            .map(([day, hours]) => (
+                                                <View key={day} className="mt-2 flex-row justify-between">
+                                                    <Text className="font-semibold mr-1">
+                                                        {day.charAt(0).toUpperCase() + day.slice(1)}
+                                                    </Text>
+                                                    <View className="flex items-end">
+                                                        {hours ? (
+                                                            hours.map((hour, i) => (
+                                                                <Text key={i} className="text-sm">
+                                                                    {hour}
+                                                                </Text>
+                                                            ))
+                                                        ) : (
+                                                            <Text className="text-sm italic">Fermé</Text>
+                                                        )}
+                                                    </View>
+                                                </View>
+                                            ))}
+                                    </View>
+                                </View>
+                            )
+                        ))}
+                    </View>
+
+                    {/* Separator */}
+                    <Text className={"font-extrabold text-red-400 ml-8"}>_______ _</Text>
+
+                    <View className={'mt-7 mx-5 gap-4'}>
+                        <View className={'flex-row gap-3 items-center'}>
+                            <MapPinIcon size={"20"} color={"#C41B1B"}/>
+                            <Text className={"text-xl font-medium"}>
+                                {activeAgency.address}, {activeAgency.city}
+                            </Text>
+                        </View>
+
+                        <View style={{width: '100%', height: 200, borderRadius: 10, overflow: 'hidden'}}>
+                            <MapView
+                                style={{flex: 1}}
+                                initialRegion={{
+                                    latitude: activeAgency.localisation[0],
+                                    longitude: activeAgency.localisation[1],
+                                    latitudeDelta: 0.02,
+                                    longitudeDelta: 0.02,
+                                }}
+                            >
+                                <Marker
+                                    coordinate={{
+                                        latitude: activeAgency.localisation[0],
+                                        longitude: activeAgency.localisation[1]
+                                    }}
+                                    title={activeAgency.city}
+                                    description={activeAgency.name}
+                                />
+                            </MapView>
+                        </View>
+                    </View>
+
+                </View>
 
             </ScrollView>
 

@@ -161,3 +161,97 @@ export const cars: Car[] = [
         picture: require('../assets/images/kangoo.png')
     },
 ]
+
+export interface Reservation {
+    id: string; // Identifiant unique de la réservation
+    car: Car; // Voiture réservée
+    agency: Agency; // Agence où la réservation est effectuée
+    customerName: string; // Nom du client ayant réservé
+    customerContact: string; // Contact du client (e.g., téléphone ou email)
+    startDate: Date; // Date et heure de début de la réservation
+    endDate: Date; // Date et heure de fin de la réservation
+    status: "upcoming" | "current" | "completed" | "cancelled"; // Statut de la réservation
+}
+
+export const reservations: Reservation[] = [
+    {
+        id: "res-001",
+        car: cars[0],
+        agency: agencies.find(agency => agency.city === "Nanterre")!,
+        customerName: "Jean Dupont",
+        customerContact: "jean.dupont@example.com",
+        startDate: new Date("2024-12-28T09:00:00"),
+        endDate: new Date("2024-12-28T12:00:00"),
+        status: "upcoming",
+    },
+    {
+        id: "res-002",
+        car: cars[4],
+        agency: agencies.find(agency => agency.city === "Gennevilliers")!,
+        customerName: "Marie Curie",
+        customerContact: "marie.curie@example.com",
+        startDate: new Date("2024-12-25T14:00:00"),
+        endDate: new Date("2024-12-25T16:30:00"),
+        status: "completed",
+    },
+    {
+        id: "res-003",
+        car: cars[8],
+        agency: agencies.find(agency => agency.city === "Pau")!,
+        customerName: "Albert Einstein",
+        customerContact: "albert.einstein@example.com",
+        startDate: new Date("2024-12-28T10:00:00"),
+        endDate: new Date("2024-12-28T13:00:00"),
+        status: "current",
+    },
+    {
+        id: "res-004",
+        car: cars[2],
+        agency: agencies.find(agency => agency.city === "Nanterre")!,
+        customerName: "Isaac Newton",
+        customerContact: "isaac.newton@example.com",
+        startDate: new Date("2024-12-29T09:30:00"),
+        endDate: new Date("2024-12-29T11:30:00"),
+        status: "cancelled",
+    },
+    {
+        id: "res-005",
+        car: cars[6],
+        agency: agencies.find(agency => agency.city === "Avignon")!,
+        customerName: "Galileo Galilei",
+        customerContact: "galileo.galilei@example.com",
+        startDate: new Date("2024-12-31T14:00:00"),
+        endDate: new Date("2024-12-31T15:00:00"),
+        status: "upcoming",
+    },
+    {
+        id: "res-006",
+        car: cars[9],
+        agency: agencies.find(agency => agency.city === "Boulogne-sur-mer")!,
+        customerName: "Nikola Tesla",
+        customerContact: "nikola.tesla@example.com",
+        startDate: new Date("2024-12-25T10:30:00"),
+        endDate: new Date("2024-12-25T12:00:00"),
+        status: "completed",
+    },
+    {
+        id: "res-007",
+        car: cars[5],
+        agency: agencies.find(agency => agency.city === "Gennevilliers")!,
+        customerName: "Ada Lovelace",
+        customerContact: "ada.lovelace@example.com",
+        startDate: new Date("2024-12-27T11:00:00"),
+        endDate: new Date("2024-12-27T14:00:00"),
+        status: "current",
+    },
+    {
+        id: "res-008",
+        car: cars[7],
+        agency: agencies.find(agency => agency.city === "Pau")!,
+        customerName: "Alan Turing",
+        customerContact: "alan.turing@example.com",
+        startDate: new Date("2024-12-30T09:00:00"),
+        endDate: new Date("2024-12-30T11:30:00"),
+        status: "upcoming",
+    }
+];

@@ -6,20 +6,19 @@ import SchedulePicker from "./SchedulePicker";
 import Animated, {FadeIn, FadeInDown, FadeInLeft, FadeOut} from "react-native-reanimated";
 import {BlurView} from "expo-blur";
 import {LinearGradient} from "expo-linear-gradient";
+import {Reservation} from "../theme";
 
 type ReservationModalProps = {
     visible: boolean;
     onClose: () => void;
-    activeCar: any;
-    activeAgency: any;
+    reservation: Reservation;
 };
 
-function ReservationModal({
-                              visible,
-                              onClose,
-                              activeCar,
-                              activeAgency,
-                          }: ReservationModalProps) {
+function EditReservationModal({
+                                  visible,
+                                  onClose,
+                                  reservation
+                              }: ReservationModalProps) {
     const [selectedDate, setSelectedDate] = useState("");
     const [selectedStartHour, setSelectedStartHour] = useState("");
     const [selectedEndHour, setSelectedEndHour] = useState("");
@@ -83,12 +82,12 @@ function ReservationModal({
                             {/* Informations véhicule et agence */}
                             <View className="m-2 items-center">
                                 <Image
-                                    source={activeCar.picture}
+                                    source={reservation.car.picture}
                                     className="w-[180px] h-[120px]"
                                 />
                                 <View className="flex-row items-center justify-center mt-5">
-                                    <Text className="text-3xl font-semibold">{activeCar.brand} • </Text>
-                                    <Text className="text-2xl font-medium mt-1">{activeCar.model}</Text>
+                                    <Text className="text-3xl font-semibold">{reservation.car.brand} • </Text>
+                                    <Text className="text-2xl font-medium mt-1">{reservation.car.model}</Text>
                                 </View>
                                 <Text className="font-semibold text-gray-600 mt-2">DF-654-PG</Text>
                             </View>
@@ -100,7 +99,7 @@ function ReservationModal({
                                 </View>
                                 <View>
                                     <Text className="text-gray-600 text-md font-semibold">Agence</Text>
-                                    <Text className="text-lg font-semibold">{activeAgency.name}</Text>
+                                    <Text className="text-lg font-semibold">{reservation.agency.name}</Text>
                                 </View>
                             </View>
 
@@ -110,8 +109,8 @@ function ReservationModal({
                                 </View>
                                 <View>
                                     <Text className="text-gray-600 text-md font-semibold mb-1">Adresse</Text>
-                                    <Text className="text-lg font-semibold">{activeAgency.address}</Text>
-                                    <Text className="text-lg font-semibold">{activeAgency.city}</Text>
+                                    <Text className="text-lg font-semibold">{reservation.agency.address}</Text>
+                                    <Text className="text-lg font-semibold">{reservation.agency.city}</Text>
                                 </View>
                             </View>
 
@@ -122,7 +121,10 @@ function ReservationModal({
                                 onDateSelected={handleDateChange}
                                 onStartHourSelected={(hour) => setSelectedStartHour(hour)}
                                 onEndHourSelected={(hour) => setSelectedEndHour(hour)}
+                                defaultStartDate={reservation.startDate}
+                                defaultEndDate={reservation.endDate}
                             />
+
                         </View>
 
                     </ScrollView>
@@ -139,7 +141,7 @@ function ReservationModal({
                         >
                             <Animated.View entering={FadeInLeft} className="flex-row items-center justify-center">
                                 <Text className="text-xl font-semibold text-white">
-                                    Confirmer la réservation
+                                    Modifier la réservation
                                 </Text>
                                 <ChevronRightIcon size={20} color={"white"}/>
                             </Animated.View>
@@ -147,7 +149,7 @@ function ReservationModal({
                     ) : (
                         <View className="mx-5 bg-red-100 p-3 rounded-full border border-red-300">
                             <Text className="text-xl font-bold text-red-600 text-center">
-                                Confirmer la réservation
+                                Modifier la réservation
                             </Text>
                         </View>
                     )}
@@ -157,4 +159,4 @@ function ReservationModal({
     );
 }
 
-export default ReservationModal;
+export default EditReservationModal;

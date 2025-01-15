@@ -7,6 +7,8 @@ type SchedulePickerProps = {
     onDateSelected: (date: string) => void;
     onStartHourSelected: (hour: string) => void;
     onEndHourSelected: (hour: string) => void;
+    defaultStartDate?: Date; // Valeur par défaut pour la date et l'heure de début
+    defaultEndDate?: Date; // Valeur par défaut pour la date et l'heure de fin
 };
 
 // Fonction pour générer les jours d'une semaine
@@ -35,17 +37,41 @@ const hours = [
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
 ];
 
-function SchedulePicker({onDateSelected, onStartHourSelected, onEndHourSelected}: SchedulePickerProps) {
+function SchedulePicker({onDateSelected, onStartHourSelected, onEndHourSelected, defaultStartDate, defaultEndDate}: SchedulePickerProps) {
     const today = new Date();
+    const initialStartDate = defaultStartDate || today;
+    const initialEndDate = defaultEndDate || null;
+
     const [currentWeek, setCurrentWeek] = useState(today);
     const [weekDays, setWeekDays] = useState(getWeekDays(today));
     const [selectedDay, setSelectedDay] = useState(today.toDateString());
-    const [startHour, setStartHour] = useState('');
-    const [endHour, setEndHour] = useState('');
+    const [startHour, setStartHour] = useState(
+        initialStartDate ? initialStartDate.toTimeString().slice(0, 5) : ''
+    );
+    const [endHour, setEndHour] = useState(
+        initialEndDate ? initialEndDate.toTimeString().slice(0, 5) : ''
+    );
 
     useEffect(() => {
-        onDateSelected(today.toDateString());
+        // Initialiser les valeurs sélectionnées au montage
+        onDateSelected(selectedDay);
+        onStartHourSelected(startHour || '');
+        onEndHourSelected(endHour || '');
     }, []);
+
+    const selectDay = (item: { date: Date, dayName: string, dayNumber: number }) => {
+        // Réinitialiser les heures
+        setStartHour('');
+        setEndHour('');
+
+        // Mettre à jour la date sélectionnée
+        setSelectedDay(item.date.toDateString());
+
+        // Passer la date et réinitialiser les heures au parent
+        onDateSelected(item.date.toDateString());
+        onStartHourSelected('');
+        onEndHourSelected('');
+    };
 
     const selectHour = (hour: string) => {
         if (!startHour || (startHour && endHour)) {
@@ -109,7 +135,7 @@ function SchedulePicker({onDateSelected, onStartHourSelected, onEndHourSelected}
     };
 
     return (
-        <View className="flex-1">
+        <View className="flex-1 mb-2">
             <View className="bg-red-50 p-5 mx-5 mt-5 rounded-lg">
 
                 {/* Header avec les chevrons */}
@@ -136,7 +162,7 @@ function SchedulePicker({onDateSelected, onStartHourSelected, onEndHourSelected}
                         renderItem={({item}) => (
                             <TouchableOpacity
                                 onPress={() => {
-                                    setSelectedDay(item.date.toDateString());
+                                    selectDay(item);
                                     setStartHour('');
                                     setEndHour('');
                                 }}
