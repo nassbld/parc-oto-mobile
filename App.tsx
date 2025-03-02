@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {NavigationContainer, NavigationProp, useNavigation} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import LoginScreen from './screens/LoginScreen';
@@ -10,6 +10,9 @@ import MyReservationsScreen from "./screens/MyReservationsScreen";
 import "./global.css";
 import { Agency, Car } from "./theme";
 import CustomDrawerContent from "./components/CustomDrawerContent";
+import {storageService} from "./services/storageService";
+import {ActivityIndicator, View} from "react-native";
+import apiClient from "./services/apiClient";
 
 export type RootStackParamList = {
     Onboarding: undefined;
@@ -40,9 +43,52 @@ function HomeDrawer() {
 }
 
 export default function App() {
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList>("Onboarding");
+
+    useEffect(() => {
+        checkToken();
+    }, []);
+
+    const checkToken = async () => {
+        try {
+            const token = await storageService.getToken();
+            if (token) {
+                apiClient.defaults.headers.Authorization = `Bearer ${token}`;
+
+                const response = await apiClient.get('/auth/verify-token');
+                if (response.status === 200) {
+                    setIsAuthenticated(true);
+                    setInitialRoute('Home');
+                }
+            } else {
+                console.log('Aucun token trouvé');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la vérification du token:', error);
+            await storageService.removeToken();
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#C41B1B" />
+            </View>
+        );
+    }
+
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Onboarding">
+            <Stack.Navigator
+                screenOptions={{ headerShown: false }}
+                initialRouteName={initialRoute}
+            >
                 <Stack.Screen name="Onboarding" component={OnboardingScreen} />
                 <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Home" component={HomeDrawer} />

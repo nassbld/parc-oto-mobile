@@ -1,59 +1,81 @@
-import React from 'react';
-import { View, Image, Text, TextInput, TouchableOpacity } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import Animated, { FadeInDown, FadeInLeft, FadeInRight } from 'react-native-reanimated';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../App';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons'; // Pour les icônes
+import { StatusBar } from 'expo-status-bar';
 
-function LoginScreen() {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+function LoginScreen({ navigation }: any) {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleLogin = () => {
+        // Ajoutez la logique de connexion ici
+        console.log('Email:', email);
+        console.log('Password:', password);
+    };
 
     return (
-        <SafeAreaView className="flex-1 bg-white inset-0">
+        <SafeAreaView className="flex-1 bg-red-700">
             <StatusBar style="light" />
-            <Image className="h-full w-full absolute" source={require('../assets/images/background.png')} />
-            <View className="flex-row justify-around w-full absolute">
-                <Animated.View entering={FadeInLeft.delay(200).duration(1000)}>
-                    <Image className="h-[200] w-[200] mt-8" source={require('../assets/images/car-icon.png')} />
-                </Animated.View>
-                <Animated.View entering={FadeInRight.delay(400).duration(1000)}>
-                    <Image className="h-[100] w-[90] mt-12 mr-10" source={require('../assets/images/car-icon.png')} style={{ transform: [{ scaleX: -1 }] }} />
-                </Animated.View>
+
+            <View className="mt-24 mb-10 mx-6">
+                <Text className="text-white text-4xl font-bold tracking-wider">Connectez-vous</Text>
+                <Text className="text-gray-400 text-sm mt-2">Connectez-vous à votre compte</Text>
             </View>
 
-            <View className="flex-1 justify-center pt-48 pb-10 gap-10">
-                <View className="flex items-center">
-                    <Text className="text-white font-bold tracking-wider text-3xl">
-                        Se connecter
-                    </Text>
+            <View className="flex-1 py-16 px-6 mb-8 mx-2 bg-red-200 rounded-xl justify-between">
+                <View className="gap-5">
+                    <View className="border-2 border-white rounded-xl flex-row items-center px-4 py-6">
+                        <TextInput
+                            value={email}
+                            onChangeText={setEmail}
+                            placeholder="Email"
+                            placeholderTextColor="#aaa"
+                            className="flex-1 text-black font-semibold tracking-wide"
+                            keyboardType="email-address"
+                        />
+                    </View>
+
+                    {/* Champ Mot de passe */}
+                    <View className="border-2 border-white rounded-xl flex-row items-center px-4 py-6 mb-2">
+                        <TextInput
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder="Password"
+                            placeholderTextColor="#aaa"
+                            secureTextEntry={!showPassword}
+                            className="flex-1 text-black font-semibold tracking-wide"
+                        />
+                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                            <Ionicons
+                                name={showPassword ? 'eye-off' : 'eye'}
+                                size={20}
+                                color="#000"
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    {/* Lien Mot de passe oublié */}
+                    <TouchableOpacity>
+                        <Text className="text-right font-bold text-red-400">Forgot Password?</Text>
+                    </TouchableOpacity>
+
+                    {/* Bouton Connexion */}
+                    <TouchableOpacity
+                        onPress={handleLogin}
+                        className="bg-red-400 py-4 rounded-xl"
+                    >
+                        <Text className="text-center text-white font-bold text-xl tracking-wide">Login</Text>
+                    </TouchableOpacity>
                 </View>
 
-                <View className="flex items-center mx-5 gap-5">
-                    <Animated.View entering={FadeInDown.duration(1000).springify()} className="bg-white/30 p-5 rounded-2xl w-full">
-                        <TextInput placeholder="Email" placeholderTextColor="gray" className="p-1 rounded-xl w-full" />
-                    </Animated.View>
-                    <Animated.View entering={FadeInDown.delay(200).duration(1000).springify()} className="bg-white/30 p-5 rounded-2xl w-full">
-                        <TextInput placeholder="Mot de passe" placeholderTextColor="gray" secureTextEntry className="p-1 rounded-xl w-full" />
-                    </Animated.View>
-                    <Animated.View entering={FadeInDown.delay(400).duration(1000).springify()} className="w-full">
-                        <TouchableOpacity
-                            className="w-full bg-red-400 p-3 rounded-2xl mb-3"
-                            onPress={() => navigation.navigate('Home')}
-                        >
-                            <Text className="text-xl font-bold text-white text-center">
-                                Se connecter
-                            </Text>
-                        </TouchableOpacity>
-                    </Animated.View>
-                    <Animated.View entering={FadeInDown.delay(600).duration(1000).springify()} className="flex-row justify-center">
-                        <Text>Pas de compte ? </Text>
-                        <TouchableOpacity>
-                            <Text className="text-red-500">
-                                Inscrivez-vous
-                            </Text>
-                        </TouchableOpacity>
-                    </Animated.View>
+                {/* Lien Inscription */}
+                <View className="mt-10 flex-row justify-center">
+                    <Text className="text-gray-400">Don't have an account? </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                        <Text className="text-red-400 font-bold">Register</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>

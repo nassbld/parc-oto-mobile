@@ -3,17 +3,19 @@ import {Dimensions, View} from "react-native";
 import LottieView from "lottie-react-native";
 import carAnimation from '../assets/animations/car-animation.json';
 import loginAnimation from '../assets/animations/login-animation.json';
-import {NavigationProp, useNavigation} from "@react-navigation/native";
+import {useNavigation} from "@react-navigation/native";
 import {RootStackParamList} from "../App";
 import Onboarding from "react-native-onboarding-swiper";
+import {StackNavigationProp} from "@react-navigation/stack";
 
 const {width, height} = Dimensions.get("window");
 
 function OnboardingScreen() {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+    type NavigationProps = StackNavigationProp<RootStackParamList>;
+    const navigation = useNavigation<NavigationProps>();
 
     const boardingDone = () => {
-        navigation.navigate('Login');
+        navigation.replace('Login');
     }
 
     return (
