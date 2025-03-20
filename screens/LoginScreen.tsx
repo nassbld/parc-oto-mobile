@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Alert, ImageBackground, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {StatusBar} from 'expo-status-bar';
-import {ChevronLeftIcon, EyeIcon, EyeSlashIcon} from "react-native-heroicons/outline";
+import {EyeIcon, EyeSlashIcon} from "react-native-heroicons/outline";
 import {useNavigation} from "@react-navigation/native";
 import {RootStackParamList} from "../App";
 import {StackNavigationProp} from "@react-navigation/stack";
@@ -30,22 +30,19 @@ function LoginScreen() {
 
             const response = await authService.login(credentials);
 
-            // Connexion réussie : sauvegarde du token
-            const token = response.token; // Assure-toi que la réponse contient bien un champ "token"
+            const token = response.token;
             if (token) {
                 await storageService.saveToken(token);
                 apiClient.defaults.headers.Authorization = `Bearer ${token}`;
 
                 Alert.alert('Succès', 'Vous êtes connecté avec succès.');
 
-                // Navigation vers la page principale de l'application
-                navigation.navigate('Home');
+                navigation.replace('Home');
             } else {
                 throw new Error('Token non reçu depuis le serveur.');
             }
 
         } catch (error: any) {
-            // Afficher l'erreur retournée par l'API
             Alert.alert('Erreur de connexion', error.message || 'Une erreur est survenue lors de la connexion.');
         }
     };

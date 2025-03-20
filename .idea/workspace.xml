@@ -4,29 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="21faccf8-b09a-4471-812b-eb009d2534d7" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/parc-oto-mobile.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/login-background.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/InputWithLabel.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/MultiStepCarousel.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/Paginator.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/RegisterStep1.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/RegisterStep2.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/screens/ForgotPasswordScreen.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/screens/RegisterScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="21faccf8-b09a-4471-812b-eb009d2534d7" name="Changes" comment="Login &amp; Register finished">
+      <change afterPath="$PROJECT_DIR$/screens/FavoriteAgenciesScreen.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/services/UserContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/background.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/images/car-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/CarCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/CarCard.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/CustomDrawerContent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/CustomDrawerContent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ProfileCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ProfileCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dtos/dtos.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/dtos/dtos.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/enums/enums.ts" beforeDir="false" afterPath="$PROJECT_DIR$/enums/enums.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/HomeScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/HomeScreen.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/LoginScreen.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/screens/LoginScreen.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.cjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/apiClient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/services/apiClient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/authService.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/services/authService.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/entitiesServices/agencyService.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/services/entitiesServices/agencyService.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/entitiesServices/userService.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/services/entitiesServices/userService.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/entitiesServices/vehicleService.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/services/entitiesServices/vehicleService.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,11 +97,24 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1741109507724</updated>
-      <workItem from="1741109510577" duration="47795000" />
+      <workItem from="1741109510577" duration="95844000" />
     </task>
+    <task id="LOCAL-00001" summary="Login &amp; Register finished">
+      <option name="closed" value="true" />
+      <created>1741828565771</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1741828565771</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Login &amp; Register finished" />
+    <option name="LAST_COMMIT_MESSAGE" value="Login &amp; Register finished" />
   </component>
 </project>

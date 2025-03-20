@@ -1,17 +1,24 @@
 import apiClient from './apiClient';
+import { storageService } from './storageService';
 
-const API_URL = '/auth';
+const API_URL = '/api/auth';
 
 export const authService = {
     async login(credentials: { email: string; password: string }) {
         try {
             const response = await apiClient.post(`${API_URL}/login`, credentials);
+            const token = response.data.token;
+
+            await storageService.saveToken(token);
+
+            apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
             return response.data;
         } catch (error) {
             if (error instanceof Error) {
-                throw new Error(error.message);
+                console.error('Erreur lors de la connexion:', error.message);
             } else {
-                throw new Error('Une erreur inconnue s’est produite.');
+                console.error('Erreur inconnue:', error);
             }
         }
     },
@@ -29,10 +36,27 @@ export const authService = {
             return response.data;
         } catch (error) {
             if (error instanceof Error) {
-                throw new Error(error.message);
+                console.error('Erreur lors de l\'inscription:', error.message);
             } else {
-                throw new Error('Une erreur inconnue s’est produite.');
+                console.error('Erreur inconnue:', error);
             }
         }
+    },
+
+    async getCurrentUser() {
+        try {
+            const response = await apiClient.get(`${API_URL}/me`);
+            return response.data;
+        } catch (error) {
+            throw new Error('Impossible de récupérer les données utilisateur.');
+        }
+    },
+
+    async logout() {
+        // Supprimer le token localement
+        await storageService.removeToken();
+
+        // Supprimer l'en-tête Authorization
+        delete apiClient.defaults.headers.common['Authorization'];
     },
 };

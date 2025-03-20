@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.24.612 on 2025-02-17 14:49:42.
+// Generated using typescript-generator version 2.24.612 on 2025-03-19 18:03:09.
 
 export enum ReportType {
     DAMAGE = "DAMAGE",

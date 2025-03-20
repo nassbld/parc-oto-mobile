@@ -1,15 +1,20 @@
 /* tslint:disable */
 /* eslint-disable */
-// Generated using typescript-generator version 2.24.612 on 2025-02-17 14:49:41.
+// Generated using typescript-generator version 2.24.612 on 2025-03-19 18:03:08.
 
 export interface AgencyDTO {
     id: number;
     name: string;
     street: string;
+    department: string;
     postalCode: string;
     city: string;
     country: string;
     vehicleIds: number[];
+}
+
+export interface AgencyListDTO {
+    agencyIds: number[];
 }
 
 export interface ReportDTO {

@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Bars3CenterLeftIcon, ChevronRightIcon, MapPinIcon, UserIcon} from "react-native-heroicons/solid";
-import {DrawerActions, NavigationProp, useNavigation} from "@react-navigation/native";
+import {DrawerActions, useFocusEffect, useNavigation} from "@react-navigation/native";
 import {agencies, Car, cars} from "../theme";
 import CarCard from "../components/CarCard";
 import Animated, {FadeInDown, FadeInLeft} from "react-native-reanimated";
@@ -13,13 +13,65 @@ import {RootStackParamList} from "../App";
 import ProfileCard from "../components/ProfileCard";
 import {LinearGradient} from "expo-linear-gradient";
 import ReservationModal from "../components/ReservationModal";
+import {StackNavigationProp} from "@react-navigation/stack";
+import {agencyService, vehicleService} from "../services";
+import {useUser} from "../services/UserContext";
+import {AgencyDTO, VehicleIdentityDTO} from "../dtos/dtos";
 
 function HomeScreen() {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const [activeAgency, setActiveAgency] = useState(agencies.at(0));
-    const [activeCar, setActiveCar] = useState<Car | null>(null);
+    type NavigationProps = StackNavigationProp<RootStackParamList>;
+    const navigation = useNavigation<NavigationProps>();
+    const { userData, favoriteAgencyIds, loading, refreshFavoriteAgencies } = useUser();
+    const [activeVehicle, setActiveVehicle] = useState<VehicleIdentityDTO | null>(null);
     const [showProfile, setShowProfile] = useState(false);
     const [reservationVisible, setReservationVisible] = useState(false);
+
+    const [favoriteAgencies, setFavoriteAgencies] = useState<AgencyDTO[]>([]);
+    const [activeAgency, setActiveAgency] = useState<AgencyDTO | null>(null);
+
+    const [favoriteAgenciesVehicles, setFavoriteAgenciesVehicles] = useState<VehicleIdentityDTO[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    useFocusEffect(
+        useCallback(() => {
+            if (favoriteAgencyIds.length > 0) {
+                fetchFavoriteAgencies();
+            }
+        }, [favoriteAgencyIds])
+    );
+
+    useEffect(() => {
+        if (favoriteAgencies.length > 0) {
+            setActiveAgency(favoriteAgencies[0]);
+        }
+    }, [favoriteAgencies]);
+
+    useEffect(() => {
+        fetchVehicles();
+    }, [favoriteAgencyIds]);
+
+    const fetchFavoriteAgencies = async () => {
+        try {
+            const data = await agencyService.getByIds(favoriteAgencyIds);
+            setFavoriteAgencies(data);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des agences:', error);
+        }
+    };
+
+    const fetchVehicles = async () => {
+        if (favoriteAgencyIds.length > 0) {
+            try {
+                setIsLoading(true);
+                const vehicles = await vehicleService.getVehiclesIdentityByAgencyIds(favoriteAgencyIds);
+                setFavoriteAgenciesVehicles(vehicles);
+            } catch (error) {
+                console.error("Erreur lors du chargement des véhicules:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    }
 
     return (
         <SafeAreaView className={"flex-1 bg-red-200"}>
@@ -31,7 +83,7 @@ function HomeScreen() {
                 className="absolute inset-x-0 top-0 px-6 pt-11 pb-3 flex-row justify-between items-center bg-red-200"
                 style={{zIndex: 10}}
             >
-                <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
+                <TouchableOpacity className="w-20" onPress={() => navigation.dispatch(DrawerActions.openDrawer())}>
                     <Bars3CenterLeftIcon size={30} color="black"/>
                 </TouchableOpacity>
 
@@ -66,11 +118,16 @@ function HomeScreen() {
                         </Text>
                         <ScrollView horizontal className={"mt-8 px-5"} showsHorizontalScrollIndicator={false}>
                             {
-                                agencies.map((agency, index) => {
-                                    let isActive = agency == activeAgency;
+                                favoriteAgencies.map((agency, index) => {
+                                    let isActive = agency.id == activeAgency?.id;
                                     let textClass = `text-xl ${isActive ? ' font-bold' : ''}`;
                                     return (
-                                        <TouchableOpacity key={index} onPress={() => setActiveAgency(agency)}
+                                        <TouchableOpacity key={index}
+                                                          onPress={() =>
+                                                          {
+                                                              setActiveAgency(agency);
+                                                              setActiveVehicle(null);
+                                                          }}
                                                           className={"mr-8 relative"}>
                                             <Text className={textClass}>{agency.name}</Text>
                                             {
@@ -90,12 +147,11 @@ function HomeScreen() {
                     <View className={"mt-8"}>
                         <ScrollView className={'w-full'} horizontal showsHorizontalScrollIndicator={false}>
                             <View className={'flex-row px-3'}>
-                                {cars.map((car, index) => {
-                                    // @ts-ignore
-                                    if (activeAgency.city == car.agency) {
+                                {favoriteAgenciesVehicles.map((vehicle, index) => {
+                                    if (activeAgency?.id == vehicle.agencyId) {
                                         return (
-                                            <TouchableOpacity key={index} onPress={() => setActiveCar(car)}>
-                                                <CarCard car={car} isActive={activeCar === car}/>
+                                            <TouchableOpacity key={index} onPress={() => setActiveVehicle(vehicle)}>
+                                                <CarCard vehicle={vehicle} isActive={activeVehicle === vehicle}/>
                                             </TouchableOpacity>
                                         );
                                     }
@@ -108,15 +164,14 @@ function HomeScreen() {
                     {/*Agency Informations*/}
                     <View className={"mt-8 pl-5 gap-5"}>
                         <Text className={"text-xl font-bold"}>
-                            {activeAgency.name}, {activeAgency.city}
+                            {activeAgency?.name}, {activeAgency?.city}
                         </Text>
                     </View>
 
                     {/*Agency Horaires*/}
                     <View className="mt-4 mx-6">
                         {agencies.map((agency, index) => (
-                            // @ts-ignore
-                            activeAgency.name === agency.name && (
+                            activeAgency?.name === agency.name && (
                                 <View key={index} className="flex-row gap-10">
 
                                     <View className="flex-1">
@@ -176,7 +231,7 @@ function HomeScreen() {
                         <View className={'flex-row gap-3 items-center'}>
                             <MapPinIcon size={"20"} color={"#C41B1B"}/>
                             <Text className={"text-xl font-medium"}>
-                                {activeAgency.address}, {activeAgency.city}
+                                {activeAgency?.street}, {activeAgency?.city}
                             </Text>
                         </View>
 
@@ -184,19 +239,19 @@ function HomeScreen() {
                             <MapView
                                 style={{flex: 1}}
                                 initialRegion={{
-                                    latitude: activeAgency.localisation[0],
-                                    longitude: activeAgency.localisation[1],
+                                    latitude: 48.89693,
+                                    longitude: 2.22037,
                                     latitudeDelta: 0.02,
                                     longitudeDelta: 0.02,
                                 }}
                             >
                                 <Marker
                                     coordinate={{
-                                        latitude: activeAgency.localisation[0],
-                                        longitude: activeAgency.localisation[1]
+                                        latitude: 48.89693,
+                                        longitude: 2.22037
                                     }}
-                                    title={activeAgency.city}
-                                    description={activeAgency.name}
+                                    title={activeAgency?.city}
+                                    description={activeAgency?.name}
                                 />
                             </MapView>
                         </View>
@@ -214,7 +269,7 @@ function HomeScreen() {
                     style={{zIndex: 10}}
                 >
                     {
-                        activeCar ?
+                        activeVehicle ?
                             <View>
                                 <TouchableOpacity
                                     className="mx-5 bg-red-500 p-3 rounded-full"
@@ -248,7 +303,7 @@ function HomeScreen() {
                     <ReservationModal
                         visible={reservationVisible}
                         onClose={() => setReservationVisible(false)}
-                        activeCar={activeCar}
+                        activeCar={activeVehicle}
                         activeAgency={activeAgency}
                     /> : null
             }

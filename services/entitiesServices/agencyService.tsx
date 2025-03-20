@@ -7,5 +7,13 @@ export const agencyService = {
         return response.data;
     },
 
-    // Ajoutez les autres méthodes similaires à vehicleService
+    getById: async (id: number) => {
+        const response = await apiClient.get<AgencyDTO>(`/agencies/${id}`);
+        return response.data;
+    },
+
+    getByIds: async (agencyIds: number[]) => {
+        const response = await apiClient.post<AgencyDTO[]>('/agencies/by-ids', agencyIds);
+        return response.data;
+    }
 };
